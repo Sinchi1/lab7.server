@@ -19,14 +19,12 @@ public class CommandManager implements Serializable {
         registerCommand("clear", new ClearCommand("clear", "очистить коллекцию"));
         registerCommand("add", new AddCommand("add", "добавить новый элемент в коллекцию"));
         registerCommand("exit", new ExitCommand("exit", "завершить программу (без сохранения в файл)"));
-        registerCommand("save", new SaveCommand("save", "сохранить коллекцию в файл"));
         registerCommand("remove_by_id", new RemoveByIdCommand("remove_by_id", "удалить элемент из коллекции по его id"));
         registerCommand("head", new HeadCommand("head", "вывести первый элемент коллекции"));
         registerCommand("print_genre", new PrintGenreCommand("print_genre", "Выводит все жанры использованные в коллекции"));
         registerCommand("filter_by_name", new FilterNameCommand("filter_by_name", "Показывает количество элементов начинающихся c указанной подстроки"));
         registerCommand("remove_lower", new RemoveLowerCommand("remove_lower", "Удаляет все элементы коллекции, чьё id < указанного пользователем"));
         registerCommand("remove_any_by_oscars_count", new RemoveOscarCountCommand("remove_any_by_oscars_count", "удалить из коллекции один элемент, значение поля oscarsCount которого эквивалентно заданному"));
-        registerCommand("save", new SaveCommand("save", "сохранить коллекцию в файл"));
         registerCommand("update_id", new UpdateIdCommand("update_id", "обновить значение элемента коллекции, id которого равен заданному"));
         registerCommand("execute_script", new ExecuteScriptCommand("execute_script", "считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде в котором их вводит пользователь в интерактивном режиме."));
     }

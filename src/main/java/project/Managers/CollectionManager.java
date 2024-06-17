@@ -4,30 +4,41 @@ package project.Managers;
 import project.Collections.*;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import project.Commands.ExitCommand;
 
+import javax.xml.crypto.Data;
+
 /**
  * The class that works with collection
  */
 public class CollectionManager {
 
+    private final DataBaseManager dataBaseManager;
     String path;
     public ZonedDateTime creationDate = ZonedDateTime.now();
 
+    public   LinkedList<Movie> moviesCollection;
+
     private static CollectionManager instance;
-    private CollectionManager(){}
+    private CollectionManager() {
+        dataBaseManager = DataBaseManager.getInstance();
+        try {
+            moviesCollection = (LinkedList<Movie>) dataBaseManager.getCollection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     public static CollectionManager getInstance(){
         if(instance == null){
             instance = new CollectionManager();
         }
         return instance;
     }
-
-    public   LinkedList<Movie> moviesCollection = new LinkedList<>();
 
     private int elementId;
 
@@ -247,17 +258,6 @@ public class CollectionManager {
      * The method that saving collection to file
      * @return String
      */
-    public String saveCollection()  {
-        try {
-            XmlParser xmlParser = new XmlParser();
-            return xmlParser.serializeCollection(moviesCollection);
-        } catch (IOException e) {
-            ConsolePrinter.messageToConsole("Не удалось сохранить файл, выход из программыА");
-            ExitCommand exitCommand = new ExitCommand("","");
-            exitCommand.execute("", null);
-        }
-        return null;
-    }
 
 }
 

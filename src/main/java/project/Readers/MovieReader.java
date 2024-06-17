@@ -17,7 +17,6 @@ import java.util.NoSuchElementException;
  */
 public class MovieReader {
 
-    XmlParser xmlParser = new XmlParser();
 
     IntegerChecker integerChecker = (x, y ,z) -> {
         if (z){
@@ -250,8 +249,6 @@ public class MovieReader {
         } catch (NoSuchElementException e) {
             ConsolePrinter.messageToConsole("Введена запрещённая комбинация клавиш! Файл сохранится, а программа " +
                     "завершит свою работу!");
-            collectionManager = CollectionManager.getInstance();
-            collectionManager.saveCollection();
         }
         return new Movie(id, args, cor, creationDate1, oscarCount, goldenPalmCount, length, genre, operator);
     }
