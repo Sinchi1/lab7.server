@@ -13,18 +13,15 @@ public class RemoveOscarCountCommand extends AbstractCommand{
         super(name, description);
     }
 
-    CollectionManager collectionManager;
+    DataBaseManager dataBaseManager = DataBaseManager.getInstance();
 
-    ConsolePrinter consolePrinter = new ConsolePrinter();
     /**
      * The method that printing information about deleted elements,which contained right amout of Oscars
      * @return void
      */
     @Override
     public String  execute(String args, Object object) {
-        String argument = args;
-        collectionManager = CollectionManager.getInstance();
-        return (collectionManager.removeOscar(argument).toString().replaceAll("^\\[|\\]$", ""));
+        return (dataBaseManager.removeOscar(Integer.parseInt(args)).toString().replaceAll("^\\[|\\]$", ""));
     }
 
 }

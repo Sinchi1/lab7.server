@@ -6,13 +6,14 @@ import project.Commands.AbstractCommand;
 import project.Readers.MovieReader;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.*;
 
 public class ProgramRunner {
     private static String ScriptName;
     CommandManager commandManager = new CommandManager();
     HashSet<String> corrector = new HashSet<>();
-    public String runOnce(ArrayList<String> args) throws IOException {
+    public String runOnce(ArrayList<String> args) throws IOException, SQLException {
         StringBuilder result = new StringBuilder();
         Iterator<String> iterator = args.iterator();
         ProgrammStateManager programmStateManager = ProgrammStateManager.getInstance();

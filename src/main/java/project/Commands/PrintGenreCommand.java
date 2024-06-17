@@ -13,17 +13,15 @@ public class PrintGenreCommand extends AbstractCommand {
         super(name, description);
     }
 
-    CollectionManager collectionManager;
+    DataBaseManager dataBaseManager = DataBaseManager.getInstance();
 
-    ConsolePrinter consolePrinter = new ConsolePrinter();
     /**
      * The method that creates new files of collection
      * @return void
      */
     @Override
     public String execute(String args, Object object) {
-        collectionManager = CollectionManager.getInstance();
-        return collectionManager.getCollectionGenres().toString().replaceAll("^\\[|\\]$", "");
+        return dataBaseManager.getGenres().toString().replaceAll("^\\[|\\]$", "");
     }
 
 }

@@ -1,5 +1,6 @@
 package project.Commands;
 
+import project.Collections.Movie;
 import project.Managers.*;
 
 import java.io.IOException;
@@ -11,17 +12,20 @@ public class HeadCommand extends AbstractCommand{
     public HeadCommand(String name, String description) {
         super(name, description);
     }
-    CollectionManager collectionManager;
-
-    ConsolePrinter consolePrinter = new ConsolePrinter();
+    DataBaseManager dataBaseManager = DataBaseManager.getInstance();
     /**
      * The method used to print first element of collection
      * @return void
      */
     @Override
     public String execute(String args, Object object) {
-        collectionManager = CollectionManager.getInstance();
-        return (collectionManager.findHeadOfCollection());
+        Movie result = dataBaseManager.getHead();
+        if (result == null){
+            return "В коллекции нет ни одного элемента";
+        }
+        else {
+            return result.toString();
+        }
     }
 
 }

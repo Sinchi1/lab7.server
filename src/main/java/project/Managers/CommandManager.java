@@ -21,6 +21,7 @@ public class CommandManager implements Serializable {
         registerCommand("exit", new ExitCommand("exit", "завершить программу (без сохранения в файл)"));
         registerCommand("remove_by_id", new RemoveByIdCommand("remove_by_id", "удалить элемент из коллекции по его id"));
         registerCommand("head", new HeadCommand("head", "вывести первый элемент коллекции"));
+        registerCommand("check_id", new CheckId("check_id", "Вспомогательная команда"));
         registerCommand("print_genre", new PrintGenreCommand("print_genre", "Выводит все жанры использованные в коллекции"));
         registerCommand("filter_by_name", new FilterNameCommand("filter_by_name", "Показывает количество элементов начинающихся c указанной подстроки"));
         registerCommand("remove_lower", new RemoveLowerCommand("remove_lower", "Удаляет все элементы коллекции, чьё id < указанного пользователем"));
@@ -50,18 +51,7 @@ public class CommandManager implements Serializable {
         switch (command){
             case "remove_by_id",
                  "remove_any_by_oscars_count",
-                 "remove_lower","filter_by_name"-> {
-                return true;
-            }
-            default -> {
-                return false;
-            }
-        }
-    }
-
-    public boolean isHavingObject(String command){
-        switch (command){
-            case "add", "update_id","execute_script"-> {
+                 "remove_lower","filter_by_name","check_id"-> {
                 return true;
             }
             default -> {

@@ -48,7 +48,7 @@ public class CollectionManager {
         return moviesCollection;
     }
 
-    public void SetMoviesCollection(LinkedList<Movie> mov) {
+    public void setMoviesCollection(LinkedList<Movie> mov) {
         moviesCollection = mov;
     }
     public void setElementId(int id) {
@@ -228,7 +228,7 @@ public class CollectionManager {
             result = new StringBuilder(("Дорогой пользователь, Коллекция пуста!"));
         } else {
             for (Movie movie : moviesCollection) {
-                result.append("Название Фильма:  ").append(movie.getName()).append(" id Фильма:  ").append(movie.getId()).append(" Координата X: ");
+                result.append("Название Фильма: ").append(movie.getName()).append("\nid Фильма:  ").append(movie.getId()).append(" Координата X: ");
                 result.append(movie.getCoordinates().getX()).append(" Координата Y: ");
                 result.append(movie.getCoordinates().getY()).append(" Количество Оскаров: ");
                 result.append(movie.getOscarsCount()).append(" Количество Золотых пальм: ");

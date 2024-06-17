@@ -2,6 +2,7 @@ package project.Commands;
 
 import project.Managers.*;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +19,7 @@ public class ExecuteScriptCommand extends AbstractCommand{
      */
 
     @Override
-    public String execute(String string,Object args) throws IOException {
+    public String execute(String string,Object args) throws IOException, SQLException {
         ArrayList<String> arg = (ArrayList<String>) args;
         String result = programRunner.runOnce(arg);
         return result;

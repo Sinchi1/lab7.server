@@ -14,7 +14,7 @@ public class RemoveByIdCommand extends AbstractCommand {
     public RemoveByIdCommand(String name, String description) {
         super(name, description);
     }
-    CollectionManager collectionManager;
+    DataBaseManager dataBaseManager = DataBaseManager.getInstance();
     /**
      * The method that printing information about deleted element of collection
      * @return void
@@ -22,8 +22,8 @@ public class RemoveByIdCommand extends AbstractCommand {
     @Override
     public String execute(String args, Object object) {
         String argument = args;
-        collectionManager = CollectionManager.getInstance();
-        return (collectionManager.removeById(argument).toString().replaceAll("^\\[|\\]$", ""));
+        dataBaseManager.removeId(Integer.parseInt(argument));
+        return ("Элемент по id: "+ args + " успешно удалён");
     }
 
 }

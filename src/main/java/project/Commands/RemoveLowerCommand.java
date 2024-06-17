@@ -15,7 +15,6 @@ public class RemoveLowerCommand extends AbstractCommand {
 
     CollectionManager collectionManager;
 
-    ConsolePrinter consolePrinter = new ConsolePrinter();
     /**
      * The method that printing all removed elements above under integer
      * @return void

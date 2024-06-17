@@ -16,10 +16,7 @@ public class UpdateIdCommand extends AbstractCommand {
     }
 
     CollectionManager collectionManager;
-
-    ProgrammStateManager programmStateManager;
-
-    MovieReader reader = new MovieReader();
+    DataBaseManager dataBaseManager = DataBaseManager.getInstance();
     /**
      * The method that printing updated element of collection
      * @return void
@@ -28,15 +25,9 @@ public class UpdateIdCommand extends AbstractCommand {
     public String execute(String string, Object args) throws IOException {
         collectionManager  =  CollectionManager.getInstance();
         Movie mov1 = (Movie) args;
-        int id = mov1.getId();
-        Movie movieToReplace = collectionManager.getMovieByid(String.valueOf(id));
-        if (movieToReplace == null){
-            return "Указанного id не существует";
-        }
-        else {
-            collectionManager.replaceMovieInCollectionById(mov1.getId()-1, mov1);
-            return "Произошла успешная замена элемента коллекции по id: "+ mov1.getId();
-        }
+        dataBaseManager.updateMovie(mov1.getId(), mov1);
+        return "Произошла успешная замена элемента коллекции по id: "+ mov1.getId();
+
     }
 
 }

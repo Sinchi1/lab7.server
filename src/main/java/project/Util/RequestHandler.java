@@ -11,6 +11,7 @@ import project.ProgrammEnums.OperationCode;
 import project.ProgrammEnums.ProgrammState;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 
@@ -44,6 +45,8 @@ public class RequestHandler {
         } catch (IOException e) {
             ConsolePrinter.errorMessage("Непредвиденная операция");
             return "Невозможно выполнить команду";
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
     }

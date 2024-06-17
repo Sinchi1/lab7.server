@@ -120,5 +120,33 @@ public class Movie implements Serializable {
     public void setOperator(Person operator) {
         this.operator = operator;
     }
+
+    @Override
+    public String toString() {
+        return "Первый элемент коллекции: "
+                + "Название Фильма:  "
+                + getName()
+                +"\nid Фильма:  " + getId()
+                + "\nКоордината X: " + getCoordinates().getX()
+                + "\n Координата Y: " + getCoordinates().getY()
+                + "\n Количество Оскаров: " + getOscarsCount()
+                + "\n Количество Золотых пальм: " + getGoldenPalmCount()
+                + "\n Длина фильма: " + getLength()
+                + "\n Жанр: " + getGenre().toString()
+                + "\n Страна: " + getOperator().getLocation().getName()
+                + "\n Имя режиссёра: " + getOperator().getName()
+                +"\nЦвет глаз режиссёра: " + getOperator().getEyeColor().toString()
+                + "\n Рост режиссёра: "+ getOperator().getHeight();
+    }
+
+//           this.id = id;
+//        this.name = name;
+//        this.coordinates = coordinates;
+//        this.creationDate = creationDate;
+//        this.oscarsCount = oscarsCount;
+//        this.goldenPalmCount = goldenPalmCount;
+//        this.length = length;
+//        this.genre = genre;
+//        this.operator = operator;
 }
 

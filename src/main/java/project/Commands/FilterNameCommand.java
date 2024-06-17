@@ -13,7 +13,7 @@ public class FilterNameCommand extends AbstractCommand{
         super(name, description);
     }
 
-    CollectionManager collectionManager;
+    DataBaseManager dataBaseManager = DataBaseManager.getInstance();
     /**
      * The method used to print the number of matches in object names
      *
@@ -22,8 +22,7 @@ public class FilterNameCommand extends AbstractCommand{
     @Override
     public String execute(String args, Object object) {
         String argument = args;
-        collectionManager = CollectionManager.getInstance();
-        return (collectionManager.filterByName(argument));
+        return (dataBaseManager.filterName(argument));
     }
 
 
