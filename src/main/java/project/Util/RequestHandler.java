@@ -1,6 +1,7 @@
 package project.Util;
 
 import project.Commands.AbstractCommand;
+import project.Common.Account;
 import project.Common.Request;
 import project.Common.Response;
 import project.Managers.CommandManager;
@@ -21,7 +22,7 @@ public class RequestHandler {
     CommandManager commandManager = new CommandManager();
     OperationCodeManager operationCodeManager = OperationCodeManager.getInstance();
 
-    public Response handle(Request request) {
+    public Response handle(Request request, Account account) {
         commandManager.cmdAdd();
         String responseBody = executeCommand(request);
         OperationCode operationCode = operationCodeManager.getOperationCodeManager();

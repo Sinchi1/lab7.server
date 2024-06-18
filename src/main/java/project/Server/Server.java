@@ -1,11 +1,15 @@
 package project.Server;
 
+import com.google.common.hash.Hashing;
+import project.Common.Account;
 import project.Common.Request;
 import project.Common.Response;
 import project.Main;
 import project.Managers.ConsolePrinter;
+import project.Managers.DataBaseManager;
 import project.Managers.DeSerializer;
 import project.Managers.Serializer;
+import project.ProgrammEnums.OperationCode;
 import project.Util.RequestHandler;
 
 import java.io.IOException;
@@ -15,7 +19,10 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server {
     private static final int port = 1000;
@@ -23,10 +30,12 @@ public class Server {
     private int soTimeout;
     private ServerSocketChannel serverSocket;
     private static final RequestHandler requestHandler = new RequestHandler();
-
+    private Account account = Account.getInstance();
     private static final ByteBuffer buffer = ByteBuffer.allocate(4096);
-
+    DataBaseManager dataBaseManager = DataBaseManager.getInstance();
     private Selector selector;
+
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public void runServer(){
         ConsolePrinter.messageToConsole("Сервер готов для операций...");
@@ -69,8 +78,12 @@ public class Server {
                 if (key.isAcceptable()) {
                     accept(key);
                 } else if (key.isReadable()) {
-                    read(key);
+                    key.interestOps(0);
+                    executorService.execute(() -> {
+                        read(key);
+                    });
                 } else if (key.isWritable()) {
+                    key.interestOps(0);
                     write(key);
                 }
             }
@@ -112,14 +125,44 @@ public class Server {
             }
             buffer.flip();
             Request request = DeSerializer.deSerializeRequest(buffer);
-            Response response = requestHandler.handle(request);
-            socketChannel.register(selector, SelectionKey.OP_WRITE, response);
-            ConsolePrinter.messageToConsole("Операция завершена успешно");
+            account.setPassword(Hashing.sha512().hashString(request.getPassword(), StandardCharsets.UTF_16).toString());
+            executorService.execute(() -> executeRequest(request,key));
+
         } catch (IOException e) {
             ConsolePrinter.errorMessage("Не удалось изменить состояние канала");
             System.exit(1);
         }
 
+    }
+
+    public void executeRequest(Request request, SelectionKey key){
+        Response response;
+        if (request.getCommandName().equals("registration")){
+            if (dataBaseManager.registration(request.getUserName(), request.getPassword())){
+                response = new Response("Успешная регистрация", OperationCode.ok);
+            }
+            else {
+                response = new Response("Аккаунт уже существует", OperationCode.error);
+            }
+        } else if (request.getCommandName().equals("log")) {
+            if (dataBaseManager.log(request.getUserName(), request.getPassword())){
+                response = new Response("Вы успешно зашли в аккаунт", OperationCode.ok);
+            }
+            else {
+                response = new Response("В пароле или имени пользователя допущена ошибка ", OperationCode.error);
+            }
+        }else {
+            int userId = dataBaseManager.getPersonId(request.getUserName(), request.getPassword());
+            if (userId != -1) {
+                response = requestHandler.handle(request, account);
+            } else {
+                response = new Response("Такого юзера не существует", OperationCode.error);
+            }
+        }
+
+        key.attach(response);
+        key.interestOps(SelectionKey.OP_WRITE);
+        selector.wakeup();
     }
 
     private void write(SelectionKey key) throws IOException {

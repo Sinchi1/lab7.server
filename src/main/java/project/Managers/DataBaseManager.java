@@ -11,9 +11,7 @@ import java.util.List;
 public class DataBaseManager {
     private static DataBaseManager instance;
     private static Connection connection;
-
-
-    public static synchronized DataBaseManager getInstance(){
+    public static DataBaseManager getInstance(){
         if (instance == null) {
             instance = new DataBaseManager();
             try {
@@ -68,9 +66,22 @@ public class DataBaseManager {
     public void addMovie(Movie movie){
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO public.\"Movie\" " +
-                    "(name,cor_x,cor_y,oscar_count,golden_palm,lenght,movie_genre," +
-                    "person_name,height,eye_color,hair_color,nationality," +
-                    "person_x,person_y,person_z,city_name)" +
+                    "(name," +
+                    "cor_x," +
+                    "cor_y," +
+                    "oscar_count," +
+                    "golden_palm," +
+                    "lenght," +
+                    "movie_genre," +
+                    "person_name," +
+                    "height," +
+                    "eye_color," +
+                    "hair_color," +
+                    "nationality," +
+                    "person_x," +
+                    "person_y," +
+                    "person_z," +
+                    "city_name)" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)");
             connection.setAutoCommit(false);
 
@@ -274,16 +285,12 @@ public class DataBaseManager {
         }
 
     }
-
-
-
         public void removeId(int id) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE from \"Movie\" where id = ? ");
             preparedStatement.setInt(1, id);
-
             preparedStatement.executeUpdate();
-
+            preparedStatement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -292,7 +299,75 @@ public class DataBaseManager {
     public void clearCollection() throws SQLException {
             PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE \"Movie\"");
             preparedStatement.executeUpdate();
+            preparedStatement.close();
     }
+
+    public boolean registration(String name, String pass) {
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM \"Users\" WHERE name = ?");
+            connection.setAutoCommit(false);
+            preparedStatement.setString(1, name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            try {
+                if (resultSet.next()) {
+                    return false;
+                }
+            } catch (Exception ignored){}
+            preparedStatement = connection.prepareStatement("INSERT INTO \"Users\"(name, pass) VALUES(?, ?)");
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, pass);
+            preparedStatement.execute();
+            connection.commit();
+            preparedStatement.close();
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    public int getPersonId(String name, String pass) {
+        try {
+            PreparedStatement ps = connection.prepareStatement("SELECT id FROM  \"Users\" WHERE name = ? AND pass = ?");
+
+            ps.setString(1, name);
+            ps.setString(2, pass);
+
+            ResultSet resultSet = ps.executeQuery();
+
+            if (resultSet.next()){
+                return resultSet.getInt("id");
+            }
+
+            return -1;
+        } catch (SQLException e) {
+            return -1;
+        }
+    }
+
+    public boolean log(String name, String pass) {
+        PreparedStatement ps;
+        try {
+            ps = connection.prepareStatement("SELECT * FROM \"Users\" WHERE name = ? AND pass = ?");
+            connection.setAutoCommit(false);
+            ps.setString(1, name);
+            ps.setString(2, pass);
+            ResultSet resultSet = ps.executeQuery();
+
+            try {
+                if (resultSet.next()) {
+                    return true;
+                }
+                return false;
+            } catch (SQLException exception){
+                return false;
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+    }
+
 }
 
 
