@@ -127,7 +127,6 @@ public class Server {
             Request request = DeSerializer.deSerializeRequest(buffer);
             account.setPassword(Hashing.sha512().hashString(request.getPassword(), StandardCharsets.UTF_16).toString());
             executorService.execute(() -> executeRequest(request,key));
-
         } catch (IOException e) {
             ConsolePrinter.errorMessage("Не удалось изменить состояние канала");
             System.exit(1);
