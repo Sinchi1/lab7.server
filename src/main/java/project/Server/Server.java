@@ -140,32 +140,8 @@ public class Server {
         Response response;
         account.setUserName(request.getUserName());
         account.setPassword(request.getPassword());
-        if (request.getCommandName().equals("registration")){
-            if (dataBaseManager.registration(request.getUserName(), request.getPassword())){
-                response = new Response("Успешная регистрация", OperationCode.ok);
-                account.setUserName(request.getUserName());
-                account.setPassword(request.getPassword());
-            }
-            else {
-                response = new Response("Аккаунт уже существует", OperationCode.error);
-            }
-        } else if (request.getCommandName().equals("log")) {
-            if (dataBaseManager.log(request.getUserName(), request.getPassword())){
-                response = new Response("Вы успешно зашли в аккаунт", OperationCode.ok);
-                account.setUserName(request.getUserName());
-                account.setPassword(request.getPassword());
-            }
-            else {
-                response = new Response("В пароле или имени пользователя допущена ошибка ", OperationCode.error);
-            }
-        }else {
-            int userId = dataBaseManager.getPersonId(request.getUserName(), request.getPassword());
-            if (userId != -1 || request.getCommandName().equalsIgnoreCase("logout")) {
-                response = requestHandler.handle(request, account);
-            } else {
-                response = new Response("Такого юзера не существует", OperationCode.error);
-            }
-        }
+
+        response = requestHandler.handle(request, account);
 
         key.attach(response);
         key.interestOps(SelectionKey.OP_WRITE);

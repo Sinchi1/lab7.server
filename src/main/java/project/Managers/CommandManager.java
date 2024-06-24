@@ -28,6 +28,8 @@ public class CommandManager implements Serializable {
         registerCommand("remove_any_by_oscars_count", new RemoveOscarCountCommand("remove_any_by_oscars_count", "удалить из коллекции один элемент, значение поля oscarsCount которого эквивалентно заданному"));
         registerCommand("update_id", new UpdateIdCommand("update_id", "обновить значение элемента коллекции, id которого равен заданному"));
         registerCommand("logout", new Logout("logout", "Выход из учётной записи"));
+        registerCommand("log", new LogIn("login", "Вход в учётную запись"));
+        registerCommand("registration", new Registration("reg", "Регистрация уч. записи"));
         registerCommand("execute_script", new ExecuteScriptCommand("execute_script", "считать и исполнить скрипт из указанного файла. В скрипте содержатся команды в таком же виде в котором их вводит пользователь в интерактивном режиме."));
     }
 
