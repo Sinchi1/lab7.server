@@ -125,7 +125,9 @@ public class Server {
             }
             buffer.flip();
             Request request = DeSerializer.deSerializeRequest(buffer);
-            account.setPassword(Hashing.sha512().hashString(request.getPassword(), StandardCharsets.UTF_16).toString());
+            if (account.getPassword() == null){
+                account.setPassword(Hashing.sha512().hashString(request.getPassword(), StandardCharsets.UTF_16).toString());
+            }
             executorService.execute(() -> executeRequest(request,key));
         } catch (IOException e) {
             ConsolePrinter.errorMessage("Не удалось изменить состояние канала");
@@ -152,7 +154,7 @@ public class Server {
             }
         }else {
             int userId = dataBaseManager.getPersonId(request.getUserName(), request.getPassword());
-            if (userId != -1) {
+            if (userId != -1 || request.getCommandName().equalsIgnoreCase("logout")) {
                 response = requestHandler.handle(request, account);
             } else {
                 response = new Response("Такого юзера не существует", OperationCode.error);
