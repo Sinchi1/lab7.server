@@ -1,6 +1,7 @@
 package project.Managers;
 
 import project.Collections.*;
+import project.Common.Account;
 
 import java.sql.*;
 import java.time.ZonedDateTime;
@@ -55,7 +56,8 @@ public class DataBaseManager {
                             resultSet.getInt("person_z"),
                             resultSet.getString("city_name")
                     )
-                    )
+                    ),
+            resultSet.getString("user_name")
             );
             result.add(movie);
 
@@ -81,8 +83,9 @@ public class DataBaseManager {
                     "person_x," +
                     "person_y," +
                     "person_z," +
-                    "city_name)" +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)");
+                    "city_name," +
+                    "user_name)" +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             connection.setAutoCommit(false);
 
             preparedStatement.setString(1, movie.getName());
@@ -101,6 +104,7 @@ public class DataBaseManager {
             preparedStatement.setDouble(14, movie.getOperator().getLocation().getY());
             preparedStatement.setInt(15, movie.getOperator().getLocation().getZ());
             preparedStatement.setString(16, movie.getOperator().getLocation().getName());
+            preparedStatement.setString(17, Account.getInstance().getUserName());
 
             preparedStatement.executeUpdate();
 
@@ -133,7 +137,8 @@ public class DataBaseManager {
                     "person_y = ?, " + //14
                     "person_z = ?, " + //15
                     "city_name = ? " +  // 16
-                    "WHERE id = ?"; //17
+                    "user_name = ? " +  // 17
+                    "WHERE id = ?"; //18
 
             connection.setAutoCommit(false);
 
@@ -155,7 +160,8 @@ public class DataBaseManager {
             preparedStatement.setDouble(14, movie.getOperator().getLocation().getY());
             preparedStatement.setInt(15, movie.getOperator().getLocation().getZ());
             preparedStatement.setString(16, movie.getOperator().getLocation().getName());
-            preparedStatement.setInt(17, id);
+            preparedStatement.setString(17, Account.getInstance().getUserName());
+            preparedStatement.setInt(18, id);
 
             preparedStatement.executeUpdate();
 
@@ -199,7 +205,8 @@ public class DataBaseManager {
                                         resultSet.getInt("person_z"),
                                         resultSet.getString("city_name")
                                 )
-                        )
+                        ),
+                        resultSet.getString("user_name")
                 );
             }
 
@@ -239,9 +246,10 @@ public class DataBaseManager {
                 result.add(String.valueOf(resultSet.getInt("oscar_count")));
             }
 
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM \"Movie\" " +
+            PreparedStatement preparedStatement = connection.prepareStatement(
+                    "DELETE FROM \"Movie\" " +
                     "WHERE ctid IN " +
-                                "(SELECT ctid FROM \"Movie\" WHERE oscar_count = ? LIMIT 1)");
+                    "(SELECT ctid FROM \"Movie\" WHERE oscar_count = ? LIMIT 1)");
             preparedStatement.setInt(1, count);
             preparedStatement.executeUpdate();
 
@@ -285,6 +293,7 @@ public class DataBaseManager {
         }
 
     }
+
         public void removeId(int id) {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE from \"Movie\" where id = ? ");
