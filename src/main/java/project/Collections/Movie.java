@@ -32,10 +32,13 @@ public class Movie implements Serializable {
     private MovieGenre genre; //Поле может быть null
     @JacksonXmlProperty(localName = "person")
     private Person operator; //Поле может быть null
+    @JacksonXmlProperty(localName = "userModification")
+    private String userModification; //Поле может быть null
+
 
 
     public Movie(Integer id, String name, Coordinates coordinates, ZonedDateTime creationDate, Integer oscarsCount,
-        long goldenPalmCount, long length, MovieGenre genre, Person operator) {
+        long goldenPalmCount, long length, MovieGenre genre, Person operator, String userModification) {
         this.id = id;
         this.name = name;
         this.coordinates = coordinates;
@@ -45,6 +48,7 @@ public class Movie implements Serializable {
         this.length = length;
         this.genre = genre;
         this.operator = operator;
+        this.userModification = userModification;
     }
 
     public Movie(){}
@@ -93,6 +97,10 @@ public class Movie implements Serializable {
         this.name = name;
     }
 
+    public String getUserModification(){
+        return userModification;
+    }
+
     public void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
     }
@@ -136,17 +144,9 @@ public class Movie implements Serializable {
                 + "\n Страна: " + getOperator().getLocation().getName()
                 + "\n Имя режиссёра: " + getOperator().getName()
                 +"\nЦвет глаз режиссёра: " + getOperator().getEyeColor().toString()
-                + "\n Рост режиссёра: "+ getOperator().getHeight();
+                + "\n Рост режиссёра: "+ getOperator().getHeight()
+                + "\n Изменение: " + userModification ;
     }
 
-//           this.id = id;
-//        this.name = name;
-//        this.coordinates = coordinates;
-//        this.creationDate = creationDate;
-//        this.oscarsCount = oscarsCount;
-//        this.goldenPalmCount = goldenPalmCount;
-//        this.length = length;
-//        this.genre = genre;
-//        this.operator = operator;
 }
 

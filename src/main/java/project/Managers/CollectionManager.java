@@ -10,6 +10,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import project.Commands.ExitCommand;
+import project.Common.Account;
 
 import javax.xml.crypto.Data;
 
@@ -105,23 +106,19 @@ public class CollectionManager {
                 "Дата создания: " + CollectionManager.getInstance().getCreationDate() + "\n" +
                 "Количество элементов в коллекции: " + moviesCollection.size());
     }
-    /**
-     * The method that finds all genres used in collection
-     * @return String
-     */
 
-    public ArrayList<String> getCollectionGenres(){
-        ArrayList<String> genres = new ArrayList<String>();
-        if (moviesCollection.isEmpty()){
-            genres.add("Коллекция пуста!");
+    public String saveCollection()  {
+        try {
+            XmlParser xmlParser = new XmlParser();
+            return xmlParser.serializeCollection(moviesCollection);
+        } catch (IOException e) {
+            ConsolePrinter.messageToConsole("Не удалось сохранить файл, выход из программы");
+            ExitCommand exitCommand = new ExitCommand("","");
+            exitCommand.execute("", null);
         }
-        else {
-            for (Movie mov :  moviesCollection) {
-                genres.add("Название фильма:"+mov.getName()+" Жанр:"+mov.getGenre().toString());
-            }
-        }
-        return genres;
+        return null;
     }
+
 
 
     /**
@@ -129,28 +126,6 @@ public class CollectionManager {
      * @return String
      */
 
-    public ArrayList<String> removeById(String args){
-        int id = Integer.parseInt(args);
-        ArrayList<String> removes = new ArrayList<String>();
-        Iterator<Movie> iter = moviesCollection.iterator();
-        if (moviesCollection.isEmpty()){
-            removes.add("Коллекция Пуста!");
-        }
-        else {
-            while (iter.hasNext()) {
-                Movie mov = iter.next();
-                if (mov.getId() == id) {
-                    iter.remove();
-                    removes.add("Элемент " + mov.getName() + " Удалён ");
-                }
-            }
-        }
-        return removes;
-    }
-    /**
-     * The method that removes all elements under some id
-     * @return String
-     */
     public ArrayList<String> removeLower(String args){
         int element = Integer.parseInt(args);
         ArrayList<String> removes = new ArrayList<String>();
@@ -169,55 +144,7 @@ public class CollectionManager {
         }
         return removes;
     }
-    /**
-     * The method that removes one element of collection that have right amount of Oscars
-     * @return String
-     */
-    public ArrayList<String> removeOscar(String args){
-        int oscar = Integer.parseInt(args);
-        ArrayList<String> removes = new ArrayList<String>();
-        Iterator<Movie> iter = moviesCollection.iterator();
-        if (moviesCollection.isEmpty()){
-            removes.add("Коллекция пуста!");
-        }
-        else {
-            while (iter.hasNext()) {
-                Movie mov = iter.next();
-                if (mov.getOscarsCount() == oscar) {
-                    removes.add("Элемент " + mov.getName() + " Удалён ");
-                    iter.remove();
-                    break;
-                }
-            }
-        }
-        return removes;
-    }
-    /**
-     * The method that returns element of collection by his id
-     * @return Movie
-     */
 
-    public Movie getMovieByid(String args){
-        Movie mov1 = null;
-        int id = Integer.parseInt(args);
-        String filmName = null;
-        for (Movie mov :  moviesCollection) {
-            if (mov.getId() == id) {
-                mov1 = mov;
-                filmName = mov.getName();
-                break;
-            }
-        }
-        if (filmName == null){
-            ConsolePrinter.messageToConsole("Указанного id не существует!");
-            return mov1;
-        }
-        return mov1;
-    }
-
-    public void replaceMovieInCollectionById(int id, Movie mov){
-        moviesCollection.set(id,mov);
-    }
     /**
      * The method that shows  information about all elements in collection
      * @return String
@@ -241,6 +168,8 @@ public class CollectionManager {
                 result.append(movie.getOperator().getEyeColor().toString());
                 result.append(" Рост режиссёра: ");
                 result.append(movie.getOperator().getHeight()).append("\n");
+                result.append(" Последняя модификация пользователя: ");
+                result.append(movie.getUserModification());
             }
         }
         return result.toString();
