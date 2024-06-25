@@ -43,17 +43,6 @@ public class Registration extends AbstractCommand {
                 operationCodeManager.setProgrammState(OperationCode.error);
                 return ("Аккаунт уже существует");
             }
-        } else if (action.equals("log")) {
-            if (dataBaseManager.log(name, pass)){
-                account.setUserName(name);
-                account.setPassword(pass);
-                operationCodeManager.setProgrammState(OperationCode.ok);
-                return ("Вы успешно зашли в аккаунт");
-            }
-            else {
-                operationCodeManager.setProgrammState(OperationCode.error);
-                return ("В пароле или имени пользователя допущена ошибка ");
-            }
         }
         operationCodeManager.setProgrammState(OperationCode.error);
         return "Такого пользователя не существует!";
