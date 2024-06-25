@@ -38,18 +38,7 @@ public class LogIn extends AbstractCommand {
         String name = user.get(0);
         String pass = Hashing.sha512().hashString(user.get(1), StandardCharsets.UTF_16).toString();
         String action = user.get(2);
-        if (action.equals("reg")){
-            if (dataBaseManager.registration(name,pass )){
-                account.setUserName(name);
-                account.setPassword(pass);
-                operationCodeManager.setProgrammState(OperationCode.ok);
-                return ("Успешная регистрация");
-            }
-            else {
-                operationCodeManager.setProgrammState(OperationCode.error);
-                return ("Аккаунт уже существует");
-            }
-        } else if (action.equals("log")) {
+        if (action.equals("log")) {
             if (dataBaseManager.log(name, pass)){
                 account.setUserName(name);
                 account.setPassword(pass);

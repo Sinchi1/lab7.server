@@ -235,6 +235,33 @@ public class DataBaseManager {
         }
     }
 
+    public List<String> removeFirst() throws SQLException {
+        List<String> result = new ArrayList<>();
+        if (getCollection().isEmpty()){
+            result.add("Коллекция пуста, первого элемента не существует");
+            return result;
+
+        }
+        else {
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM \"Movie\" " +
+                        "WHERE id = (SELECT id FROM \"Movie\" ORDER BY id LIMIT 1); ");
+
+                preparedStatement.executeUpdate();
+
+                preparedStatement.close();
+
+                result.add("Первый элемент найден и удалён");
+
+                return result;
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
     public List<String> removeOscar(int count) {
         List<String> result = new ArrayList<>();
         try {
