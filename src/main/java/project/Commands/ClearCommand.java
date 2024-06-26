@@ -13,13 +13,14 @@ public class ClearCommand extends AbstractCommand {
     public ClearCommand(String name, String description) {
         super(name, description);
     }
-    DataBaseManager dataBaseManager = DataBaseManager.getInstance();
+    DataBaseManager dataBaseManager;
     /**
      * The method that admitting that collection was cleared
      * @return void
      */
     @Override
     public String execute(String args, Object object) throws SQLException {
+        dataBaseManager = DataBaseManager.getInstance();
         dataBaseManager.clearCollection();
         return ("Коллекция Успешно очищена!");
     }

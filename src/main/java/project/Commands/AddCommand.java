@@ -1,6 +1,8 @@
 package project.Commands;
 
+import project.Common.Account;
 import project.Managers.*;
+import project.ProgrammEnums.OperationCode;
 import project.ProgrammEnums.ProgrammState;
 import project.Readers.*;
 import project.Collections.Movie;
@@ -29,9 +31,11 @@ public class AddCommand extends AbstractCommand{
      */
     @Override
     public String execute(String string, Object args) throws IOException{
+        OperationCodeManager.getInstance().setProgrammState(OperationCode.ok);
         collectionManager = CollectionManager.getInstance();
             if (programmStateManager.getProgrammState() == ProgrammState.PROGRAMM_STATE_PASSIVE){
                 Movie mov1 = movieReader.readMovieFromFile((List<String>) args);
+                mov1.setUserModification(Account.getInstance().getUserName());
                 collectionManager.putMovieInCollection(mov1);
                 return ("Вы успешно создали элемент коллекции!");
             }
