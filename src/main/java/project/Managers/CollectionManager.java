@@ -169,7 +169,7 @@ public class CollectionManager {
                 result.append(" Рост режиссёра: ");
                 result.append(movie.getOperator().getHeight()).append("\n");
                 result.append(" Последняя модификация пользователя: ");
-                result.append(movie.getUserModification());
+                result.append(movie.getUserModification()).append("\n");
             }
         }
         return result.toString();

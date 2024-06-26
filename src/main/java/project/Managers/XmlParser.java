@@ -18,9 +18,7 @@ import java.util.LinkedList;
  */
 public class XmlParser {
 
-    public LinkedList<Movie> movies;
-
-    private static String path = "src/main/java/project/data/test.xml";
+    private static String path = "test.xml";
 
     CollectionManager collectionManager;
 

@@ -2,6 +2,7 @@ package project.Managers;
 
 import project.Collections.*;
 import project.Common.Account;
+import project.ProgrammEnums.OperationCode;
 
 import java.sql.*;
 import java.time.ZonedDateTime;
@@ -25,12 +26,12 @@ public class DataBaseManager {
     }
 
     public static Connection connect() throws SQLException{
-        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/lab7", "postgres", "Homychok11");
+        return DriverManager.getConnection("jdbc:postgresql://localhost:5432/studs", "num", "bruh");
     }
 
     public List<Movie> getCollection() throws SQLException {
         List<Movie> result = new LinkedList<>();
-        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM public.\"Movie\" ORDER BY id ASC");
+        PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Movie ORDER BY id ASC");
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             Movie movie = new Movie(
@@ -67,7 +68,7 @@ public class DataBaseManager {
 
     public void addMovie(Movie movie){
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO public.\"Movie\" " +
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Movie " +
                     "(name," +
                     "cor_x," +
                     "cor_y," +
@@ -113,7 +114,12 @@ public class DataBaseManager {
             preparedStatement.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            return;
         }
     }
 
@@ -170,13 +176,19 @@ public class DataBaseManager {
             preparedStatement.close();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            try {
+                connection.rollback();
+                OperationCodeManager.getInstance().setProgrammState(OperationCode.error);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+            return;
         }
     }
 
     public Movie getMovieById(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("select * from \"Movie\" where id = ? ");
+            PreparedStatement preparedStatement = connection.prepareStatement("select * from Movie where id = ? ");
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -222,7 +234,7 @@ public class DataBaseManager {
 
     public String filterName(String args) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("select Count(id) from \"Movie\" where name = ? ");
+            PreparedStatement preparedStatement = connection.prepareStatement("select Count(id) from Movie where name = ? ");
             preparedStatement.setString(1, args);
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
@@ -244,7 +256,7 @@ public class DataBaseManager {
         }
         else {
             try {
-                PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM \"Movie\" " +
+                PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM Movie " +
                         "WHERE id = (SELECT id FROM \"Movie\" ORDER BY id LIMIT 1); ");
 
                 preparedStatement.executeUpdate();
@@ -265,7 +277,7 @@ public class DataBaseManager {
     public List<String> removeOscar(int count) {
         List<String> result = new ArrayList<>();
         try {
-            PreparedStatement preparedStatementInfo = connection.prepareStatement("SELECT * FROM \"Movie\" WHERE oscar_count = ? LIMIT 1 ");
+            PreparedStatement preparedStatementInfo = connection.prepareStatement("SELECT * FROM Movie WHERE oscar_count = ? LIMIT 1 ");
             preparedStatementInfo.setInt(1, count);
             ResultSet resultSet = preparedStatementInfo.executeQuery();
 
@@ -293,7 +305,7 @@ public class DataBaseManager {
     public List<String> getGenres() {
         List<String> result = new ArrayList<>();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("select movie_genre from \"Movie\"");
+            PreparedStatement preparedStatement = connection.prepareStatement("select movie_genre from Movie");
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 result.add(resultSet.getString("movie_genre"));
@@ -310,7 +322,7 @@ public class DataBaseManager {
 
     public Movie getHead() {
         try {
-            PreparedStatement preparedStatement = connect().prepareStatement("SELECT id from \"Movie\" ORDER BY id ASC LIMIT 1");
+            PreparedStatement preparedStatement = connect().prepareStatement("SELECT id from Movie ORDER BY id ASC LIMIT 1");
             ResultSet resultSet = preparedStatement.executeQuery();
             resultSet.next();
             Movie movie = getMovieById(resultSet.getInt("id"));
@@ -323,7 +335,7 @@ public class DataBaseManager {
 
         public void removeId(int id) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE from \"Movie\" where id = ? ");
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE from Movie where id = ? ");
             preparedStatement.setInt(1, id);
             preparedStatement.executeUpdate();
             preparedStatement.close();
@@ -333,14 +345,16 @@ public class DataBaseManager {
     }
 
     public void clearCollection() throws SQLException {
-            PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE \"Movie\"");
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM MOVIE WHERE user_name = ? ");
+            connection.setAutoCommit(false);
+            preparedStatement.setString(1, Account.getInstance().getUserName());
             preparedStatement.executeUpdate();
             preparedStatement.close();
     }
 
     public boolean registration(String name, String pass) {
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM \"Users\" WHERE name = ?");
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM Users WHERE name = ?");
             connection.setAutoCommit(false);
             preparedStatement.setString(1, name);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -349,7 +363,7 @@ public class DataBaseManager {
                     return false;
                 }
             } catch (Exception ignored){}
-            preparedStatement = connection.prepareStatement("INSERT INTO \"Users\"(name, pass) VALUES(?, ?)");
+            preparedStatement = connection.prepareStatement("INSERT INTO Users(name, pass) VALUES(?, ?)");
             preparedStatement.setString(1, name);
             preparedStatement.setString(2, pass);
             preparedStatement.execute();
@@ -357,13 +371,18 @@ public class DataBaseManager {
             preparedStatement.close();
             return true;
         } catch (SQLException e) {
-            throw new RuntimeException();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
+        return false;
     }
 
     public int getPersonId(String name, String pass) {
         try {
-            PreparedStatement ps = connection.prepareStatement("SELECT id FROM  \"Users\" WHERE name = ? AND pass = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT id FROM  Users WHERE name = ? AND pass = ?");
 
             ps.setString(1, name);
             ps.setString(2, pass);
@@ -383,7 +402,7 @@ public class DataBaseManager {
     public boolean log(String name, String pass) {
         PreparedStatement ps;
         try {
-            ps = connection.prepareStatement("SELECT * FROM \"Users\" WHERE name = ? AND pass = ?");
+            ps = connection.prepareStatement("SELECT * FROM Users WHERE name = ? AND pass = ?");
             connection.setAutoCommit(false);
             ps.setString(1, name);
             ps.setString(2, pass);
@@ -400,8 +419,13 @@ public class DataBaseManager {
 
 
         } catch (SQLException e) {
-            throw new RuntimeException();
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         }
+        return false;
     }
 
 }

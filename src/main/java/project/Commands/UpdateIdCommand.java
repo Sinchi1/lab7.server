@@ -1,6 +1,7 @@
 package project.Commands;
 
 import project.Managers.*;
+import project.ProgrammEnums.OperationCode;
 import project.ProgrammEnums.ProgrammState;
 import project.Readers.*;
 import project.Collections.Movie;
@@ -26,7 +27,12 @@ public class UpdateIdCommand extends AbstractCommand {
         collectionManager  =  CollectionManager.getInstance();
         Movie mov1 = (Movie) args;
         dataBaseManager.updateMovie(mov1.getId(), mov1);
-        return "Произошла успешная замена элемента коллекции по id: "+ mov1.getId();
+        if (OperationCodeManager.getInstance().getOperationCodeManager().equals(OperationCode.ok)){
+            return "Произошла успешная замена элемента коллекции по id: "+ mov1.getId();
+        }
+        else {
+            return "Во время обновления элемента " + mov1.getId() + " произошла ошибка";
+        }
 
     }
 

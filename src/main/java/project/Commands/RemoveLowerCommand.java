@@ -27,7 +27,7 @@ public class RemoveLowerCommand extends AbstractCommand {
     String argument = args;
     collectionManager = CollectionManager.getInstance();
     dataBaseManager = DataBaseManager.getInstance();
-    return (dataBaseManager.removeFirst().toString().replaceAll("^\\[|\\]$", ""));
+    return (dataBaseManager.removeFirst().toString().replaceAll("^\\[|\\]$", "1"));
     }
 
 

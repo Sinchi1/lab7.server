@@ -101,6 +101,9 @@ public class Movie implements Serializable {
         return userModification;
     }
 
+    public void setUserModification(String userModification){
+        this.userModification = userModification;
+    }
     public void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
     }

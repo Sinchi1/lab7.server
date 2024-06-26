@@ -5,10 +5,7 @@ import project.Common.Account;
 import project.Common.Request;
 import project.Common.Response;
 import project.Main;
-import project.Managers.ConsolePrinter;
-import project.Managers.DataBaseManager;
-import project.Managers.DeSerializer;
-import project.Managers.Serializer;
+import project.Managers.*;
 import project.ProgrammEnums.OperationCode;
 import project.Util.RequestHandler;
 
@@ -25,7 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-    private static final int port = 1000;
+    private static final int port = 2032;
     private static final String host = "localhost";
     private int soTimeout;
     private ServerSocketChannel serverSocket;
@@ -128,6 +125,7 @@ public class Server {
             if (account.getPassword() == null){
                 account.setPassword(Hashing.sha512().hashString(request.getPassword(), StandardCharsets.UTF_16).toString());
             }
+            OperationCodeManager.getInstance().setProgrammState(OperationCode.ok);
             executorService.execute(() -> executeRequest(request,key));
         } catch (IOException e) {
             ConsolePrinter.errorMessage("Не удалось изменить состояние канала");
