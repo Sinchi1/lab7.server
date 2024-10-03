@@ -47,7 +47,8 @@ public class LogIn extends AbstractCommand {
             }
             else {
                 operationCodeManager.setProgrammState(OperationCode.error);
-                return ("В пароле или имени пользователя допущена ошибка ");
+                return ("" +
+                        "В пароле или имени пользователя допущена ошибка ");
             }
         }
         operationCodeManager.setProgrammState(OperationCode.error);
