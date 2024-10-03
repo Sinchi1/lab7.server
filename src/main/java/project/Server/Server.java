@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class Server {
     private static final int port = 2032;
@@ -126,7 +127,13 @@ public class Server {
                 account.setPassword(Hashing.sha512().hashString(request.getPassword(), StandardCharsets.UTF_16).toString());
             }
             OperationCodeManager.getInstance().setProgrammState(OperationCode.ok);
-            executorService.execute(() -> executeRequest(request,key));
+            executorService.execute(() -> {
+                try {
+                    executeRequest(request,key);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (IOException e) {
             ConsolePrinter.errorMessage("Не удалось изменить состояние канала");
             System.exit(1);
@@ -134,10 +141,13 @@ public class Server {
 
     }
 
-    public void executeRequest(Request request, SelectionKey key){
+    public void executeRequest(Request request, SelectionKey key) throws InterruptedException {
         Response response;
         account.setUserName(request.getUserName());
         account.setPassword(request.getPassword());
+
+        TimeUnit.SECONDS.sleep(1);
+        System.out.println(executorService);
 
         response = requestHandler.handle(request, account);
 
